@@ -4,15 +4,12 @@ const server = require('../api/server')
 const request = require('supertest');
 
 describe('POST /register', () => {
-    beforeEach(async () => {
-        await db('users').truncate();
-    })
-    it('returns status code 200 with correctly inputed information', () => {
+    it('returns status code 400 if you try to register with taken user credentials', () => {
         return (
             request(server)
                 .post('/api/auth/register')
                 .send({ username: "user", password: "pass" })
-                .expect(200)
+                .expect(400)
         )
     })
     it('returns status code 500 if you try to post without user information', () => {
