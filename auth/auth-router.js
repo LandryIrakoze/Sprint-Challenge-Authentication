@@ -20,21 +20,25 @@ router.post('/register', (req, res) => {
     })
 });
 
-router.post('/login', authenticator, (req, res) => {
+router.post('/login', (req, res) => {
   // implement login
   const { username, password } = req.body;
 
   Users.findBy({ username })
     .first()
     .then(user => {
+      console.log('user', user);
+      console.log('bcrypt', user && bcrypt.compareSync(password, user.password))
       if (user && bcrypt.compareSync(password, user.password)) {
-        req.session.user = user.username
-        res.status(200).json({ message: `Welcome ${user.username}`})
+        req.session.user = user.username;
+        res.status(200).json({ message: `Welcome ${user.username}!` })
+      } else {
+        res.status(400).json({ message: 'Invalid credentials'})
       }
     })
-    .catch(err => {
-      res.status(500).json(err)
-    })
+    .catch(error => {
+      res.status(500).json(error);
+    });
 });
 
 module.exports = router;
